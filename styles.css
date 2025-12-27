@@ -80,109 +80,41 @@ h1 {
 .tower-alt { color: #9ca3af; margin-left: 8px; }
 .tower-height { color: #6b7280; margin-left: 8px; }
 
-.normal-y {
-  font-size: 12px;
-  background: #374151;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-.normal-y span { color: #fef08a; font-weight: bold; }
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.sections {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
 .box {
   background: rgba(31, 41, 55, 0.5);
   border-radius: 4px;
-  padding: 8px;
+  padding: 10px;
 }
 
 .box-label {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: 600;
 }
 .box-label.front { color: #34d399; }
 .box-label.back { color: #fb7185; }
 
-.row { margin-bottom: 4px; }
-.row-label { font-size: 10px; color: #6b7280; }
-.row-value { margin-left: 8px; font-family: monospace; }
-.row-value.yellow { color: #fef08a; font-weight: bold; }
-.row-value.cyan { color: #67e8f9; }
-.row-note { color: #6b7280; font-size: 10px; margin-left: 4px; }
-
-.divider {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #374151;
-}
-.divider-label { font-size: 10px; color: #9ca3af; margin-bottom: 4px; }
-
 .no-back { color: #4b5563; font-size: 14px; }
-
-.alts-section { margin-top: 16px; }
-.alts-label {
-  font-size: 10px;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-.alts { display: flex; flex-wrap: wrap; gap: 6px; }
-
-.coord {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-family: monospace;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.coord-default { background: #374151; }
-.coord-best { background: #0284c7; }
-.coord-easy { background: #059669; }
-.coord-popular { background: #b45309; }
-.coord-y { color: #fef08a; font-weight: bold; }
-.coord-xz { color: white; font-weight: 500; }
-.coord-double { color: #fdba74; font-size: 10px; }
-
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  font-size: 10px;
-  color: #9ca3af;
-}
-.legend-item { display: flex; align-items: center; gap: 4px; }
-.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-.legend-dot.best { background: #0284c7; }
-.legend-dot.easy { background: #059669; }
-.legend-dot.popular { background: #b45309; }
-
-.orange { color: #fdba74; }
-.yellow { color: #fef08a; }
 
 /* Y Height Tabs */
 .y-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .y-tab {
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 6px 12px;
+  font-size: 12px;
   font-family: monospace;
   font-weight: bold;
   border-radius: 4px;
@@ -208,28 +140,48 @@ h1 {
   color: #1f2937;
 }
 
-.selected-coords {
-  margin-bottom: 8px;
-}
-
-.y-alts {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #374151;
-}
-
-.y-alts-label {
-  font-size: 10px;
-  color: #6b7280;
-  margin-bottom: 6px;
-}
-
-.y-alts-list {
+/* Coords list */
+.coords-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 8px;
 }
 
+.coord {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: monospace;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.coord-default { background: #374151; }
+.coord-best { background: #0284c7; }
+.coord-easy { background: #059669; }
+.coord-popular { background: #b45309; }
+.coord-xz { color: white; font-weight: 500; }
+.coord-double { color: #fdba74; font-size: 11px; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  font-size: 10px;
+  color: #9ca3af;
+}
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+.legend-dot.best { background: #0284c7; }
+.legend-dot.easy { background: #059669; }
+.legend-dot.popular { background: #b45309; }
+
+.orange { color: #fdba74; }
+.yellow { color: #fef08a; }
+
 @media (max-width: 500px) {
-  .grid { grid-template-columns: 1fr; }
+  .sections { gap: 8px; }
+  .coord { padding: 4px 8px; font-size: 12px; }
 }
