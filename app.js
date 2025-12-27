@@ -1,6 +1,21 @@
 let selected = towers[0];
+let frontY = null;
+let backY = null;
 
-function renderCoord(c, normalY) {
+function getAltsForY(y, normalY) {
+  // Get alternatives that match this Y height
+  return selected.alts?.filter(alt => {
+    if (alt.y) {
+      // Has explicit Y - check if it matches
+      return alt.y === String(y) || alt.y === "-1" || alt.y === "+2";
+    } else {
+      // No explicit Y - uses normalY
+      return normalY && y === normalY;
+    }
+  }) || [];
+}
+
+function renderCoord(c) {
   const d = c.t?.includes("d");
   const a = c.t?.includes("a");
   const b = c.t?.includes("b");
@@ -12,10 +27,8 @@ function renderCoord(c, normalY) {
   else if (e) cls = "coord coord-easy";
   else if (p) cls = "coord coord-popular";
   
-  const displayY = c.y || (normalY ? `Y${normalY}` : "");
-  
   return `<span class="${cls}">
-    ${displayY ? `<span class="coord-y">${displayY}</span>` : ""}
+    ${c.y ? `<span class="coord-y">${c.y}</span>` : ""}
     <span class="coord-xz">${c.xz}</span>
     ${d ? `<span class="coord-double">(Double)</span>` : ""}
     ${a ? `<span>💥</span>` : ""}
@@ -38,6 +51,26 @@ function renderButtons() {
   });
 }
 
+function renderYTabs(heights, selectedY, side) {
+  return `<div class="y-tabs">
+    ${heights.map(y => `
+      <button onclick="selectY('${side}', ${y})" class="y-tab ${selectedY === y ? 'y-tab-active' : ''}">
+        Y${y}
+      </button>
+    `).join("")}
+  </div>`;
+}
+
+function renderAltsForY(y, normalY) {
+  const alts = getAltsForY(y, normalY);
+  if (alts.length === 0) return "";
+  
+  return `<div class="y-alts">
+    <div class="y-alts-label">Alt coords:</div>
+    <div class="y-alts-list">${alts.map(c => renderCoord(c)).join("")}</div>
+  </div>`;
+}
+
 function renderDetails() {
   // Header
   document.getElementById("tower-header").innerHTML = `
@@ -50,79 +83,98 @@ function renderDetails() {
     ? `<span class="normal-y">Normal Y: <span>${selected.normalY}</span></span>` 
     : "";
 
-  // Front low offset
-  let frontLowHtml = "";
+  // Set default Y selections if not set
+  if (frontY === null || !selected.front.y.includes(frontY)) {
+    frontY = selected.front.y[0];
+  }
+  if (selected.back && (backY === null || !selected.back.y.includes(backY))) {
+    backY = selected.back.y[0];
+  }
+
+  // Front section
+  let frontHtml = `
+    <div class="box">
+      <div class="box-label front">Front</div>
+      ${renderYTabs(selected.front.y, frontY, 'front')}
+      <div class="selected-coords">
+        <span class="row-label">Coords:</span>
+        <span class="row-value cyan">${selected.front.xz}</span>
+      </div>
+      ${renderAltsForY(frontY, selected.normalY)}
+    </div>
+  `;
+
+  // Front Low (for T-97)
   if (selected.frontLow) {
-    frontLowHtml = `
-      <div class="divider">
-        <div class="divider-label">Low Offset:</div>
-        <div class="row">
-          <span class="row-label">Y:</span>
-          <span class="row-value yellow">${selected.frontLow.y.join(", ")}</span>
-        </div>
-        <div class="row">
+    frontHtml = `
+      <div class="box">
+        <div class="box-label front">Front</div>
+        ${renderYTabs(selected.front.y, frontY, 'front')}
+        <div class="selected-coords">
           <span class="row-label">Coords:</span>
-          <span class="row-value cyan">${selected.frontLow.xz}</span>
+          <span class="row-value cyan">${selected.front.xz}</span>
+        </div>
+        ${renderAltsForY(frontY, selected.normalY)}
+        <div class="divider">
+          <div class="divider-label">Low Offset:</div>
+          <div class="row">
+            <span class="row-label">Y:</span>
+            <span class="row-value yellow">${selected.frontLow.y.join(", ")}</span>
+          </div>
+          <div class="row">
+            <span class="row-label">Coords:</span>
+            <span class="row-value cyan">${selected.frontLow.xz}</span>
+          </div>
         </div>
       </div>
     `;
   }
 
   // Back section
-  let backHtml = selected.back 
-    ? `
-      <div class="row">
-        <span class="row-label">Y Heights:</span>
-        <span class="row-value yellow">${selected.back.y.join(", ")}</span>
-      </div>
-      <div class="row">
-        <span class="row-label">Coords:</span>
-        <span class="row-value cyan">${selected.back.xz}</span>
-        ${selected.back.note ? `<span class="row-note">(${selected.back.note})</span>` : ""}
-      </div>
-    `
-    : `<div class="no-back">No back setup</div>`;
-
-  // Alternatives
-  let altsHtml = "";
-  if (selected.alts?.length) {
-    altsHtml = `
-      <div class="alts-section">
-        <div class="alts-label">Alternative Setups</div>
-        <div class="alts">
-          ${selected.alts.map(c => renderCoord(c, selected.normalY)).join("")}
+  let backHtml;
+  if (selected.back) {
+    backHtml = `
+      <div class="box">
+        <div class="box-label back">Back</div>
+        ${renderYTabs(selected.back.y, backY, 'back')}
+        <div class="selected-coords">
+          <span class="row-label">Coords:</span>
+          <span class="row-value cyan">${selected.back.xz}</span>
+          ${selected.back.note ? `<span class="row-note">(${selected.back.note})</span>` : ""}
         </div>
+      </div>
+    `;
+  } else {
+    backHtml = `
+      <div class="box">
+        <div class="box-label back">Back</div>
+        <div class="no-back">No back setup</div>
       </div>
     `;
   }
 
-  // Combine all
   document.getElementById("tower-details").innerHTML = `
     <div class="grid">
-      <div class="box">
-        <div class="box-label front">Front</div>
-        <div class="row">
-          <span class="row-label">Y Heights:</span>
-          <span class="row-value yellow">${selected.front.y.join(", ")}</span>
-        </div>
-        <div class="row">
-          <span class="row-label">Coords:</span>
-          <span class="row-value cyan">${selected.front.xz}</span>
-        </div>
-        ${frontLowHtml}
-      </div>
-      <div class="box">
-        <div class="box-label back">Back</div>
-        ${backHtml}
-      </div>
+      ${frontHtml}
+      ${backHtml}
     </div>
-    ${altsHtml}
   `;
 }
 
 function selectTower(name) {
   selected = towers.find(t => t.name === name);
+  frontY = null;
+  backY = null;
   renderButtons();
+  renderDetails();
+}
+
+function selectY(side, y) {
+  if (side === 'front') {
+    frontY = y;
+  } else {
+    backY = y;
+  }
   renderDetails();
 }
 
