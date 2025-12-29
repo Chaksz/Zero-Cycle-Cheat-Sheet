@@ -112,7 +112,9 @@ const towers = [
     front: {
       104: [{ xz: "28, -30" }, { xz: "29, -31" }]
     },
-    back: null
+    back: {
+      99: [{ xz: "-26, 27", t: "db"}]
+    }
   },
   {
     name: "1/8", h: null, category: "special",
