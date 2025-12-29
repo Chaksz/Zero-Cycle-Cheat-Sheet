@@ -60,6 +60,7 @@ h1 {
 
 .btn-default { background: #1f2937; color: #d1d5db; }
 .btn-default:hover { background: #374151; }
+.btn-setup-active { background: #fbbf24; color: #1f2937; }
 .btn-small { background: #059669; color: white; }
 .btn-tall { background: #d97706; color: white; }
 .btn-special { background: #7c3aed; color: white; }

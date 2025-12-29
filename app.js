@@ -1,7 +1,41 @@
-let selected = towers[0];
+let currentMode = 'top';
+let setup = topSetup;  // Default dataset
+let selected = setup[0];
 let frontY = null;
 let frontLowY = null;
 let backY = null;
+
+function setMode(mode) {
+  currentMode = mode;
+  
+  // Update dataset
+  if (mode === 'top') {
+    setup = topSetup;
+  } else {
+    setup = sideSetup;
+  }
+
+  document.getElementById('btn-mode-top').className = 
+    `btn btn-setup ${mode === 'top' ? 'btn-setup-active' : ''}`;
+  document.getElementById('btn-mode-side').className = 
+    `btn btn-setup ${mode === 'side' ? 'btn-setup-active' : ''}`;
+
+  const currentName = selected.name;
+  const found = setup.find(t => t.name === currentName);
+  
+  if (found) {
+    selected = found;
+  } else {
+    selected = setup[0];
+  }
+
+  frontY = null;
+  frontLowY = null;
+  backY = null;
+
+  renderButtons();
+  renderDetails();
+}
 
 function renderCoord(c) {
   const d = c.t?.includes("d");
@@ -27,7 +61,7 @@ function renderButtons() {
   const colors = { small: "btn-small", tall: "btn-tall", special: "btn-special" };
   
   Object.keys(cats).forEach(cat => {
-    document.getElementById(cats[cat]).innerHTML = towers
+    document.getElementById(cats[cat]).innerHTML = setup
       .filter(t => t.category === cat)
       .map(t => {
         const isSelected = selected.name === t.name;
@@ -76,34 +110,33 @@ function renderSection(data, selectedY, side, label, labelClass) {
 }
 
 function renderDetails() {
-  // Header
   document.getElementById("tower-header").innerHTML = `
-    <span class="tower-name">${selected.name}</span>
-    ${selected.altName ? `<span class="tower-alt">(${selected.altName})</span>` : ""}
-    ${selected.h ? `<span class="tower-height">Height: ${selected.h}</span>` : ""}
+    <div class="header-left">
+      <span class="tower-name">${selected.name}</span>
+      ${selected.altName ? `<span class="tower-alt">(${selected.altName})</span>` : ""}
+      ${selected.h ? `<span class="tower-height">Height: ${selected.h}</span>` : ""}
+    </div>
+    <div style="font-size: 10px; color: #6b7280; text-transform: uppercase; font-weight: bold;">
+      ${currentMode.toUpperCase()} SETUP
+    </div>
   `;
-
-  // Build sections
+  //build section
   let html = '<div class="sections">';
-  
-  // Front
+  //front
   html += renderSection(selected.front, frontY, 'front', 'Front', 'front');
-  
-  // Front Low (for T-97)
+  //front low
   if (selected.frontLow) {
     html += renderSection(selected.frontLow, frontLowY, 'frontLow', 'Front Low Offset', 'front');
   }
-  
-  // Back
+  //Back
   html += renderSection(selected.back, backY, 'back', 'Back', 'back');
-  
   html += '</div>';
 
   document.getElementById("tower-details").innerHTML = html;
 }
 
 function selectTower(name) {
-  selected = towers.find(t => t.name === name);
+  selected = setup.find(t => t.name === name);
   frontY = null;
   frontLowY = null;
   backY = null;
@@ -118,6 +151,5 @@ function selectY(side, y) {
   renderDetails();
 }
 
-// Initialize
 renderButtons();
 renderDetails();
